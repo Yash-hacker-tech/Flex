@@ -79,14 +79,17 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: err.message || 'Something went wrong on the server' });
 });
 
-const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
 
+a// Root route (KEEP THIS ABOVE listen)
 app.get("/", (req, res) => {
   res.send("Backend is running 🚀");
 });
 
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const PORT = process.env.PORT || 5000;
+
+// ❌ REMOVE app.listen()
+// ✅ ONLY USE THIS:
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
