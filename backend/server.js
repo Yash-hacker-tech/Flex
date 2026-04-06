@@ -81,7 +81,7 @@ app.use((err, req, res, next) => {
 
 
 
-a// Root route (KEEP THIS ABOVE listen)
+// Root route (KEEP THIS ABOVE listen)
 app.get("/", (req, res) => {
   res.send("Backend is running 🚀");
 });
