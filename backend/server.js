@@ -14,8 +14,20 @@ const server = http.createServer(app);
 // Socket.IO for real-time messaging
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
-    methods: ['GET', 'POST'],
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+
+      if (origin.includes("vercel.app")) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback("Not allowed by CORS");
+    },
+    methods: ["GET", "POST"],
     credentials: true,
   },
 });
@@ -24,8 +36,28 @@ window = { io }; // Just to store io globally for controllers if needed, or pass
 global.io = io;
 
 // Middleware
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "https://flex13.vercel.app"
+];
+
+// Express CORS
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    // Allow all Vercel preview deployments
+    if (origin.includes("vercel.app")) {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error("Not allowed by CORS"));
+  },
   credentials: true,
 }));
 app.use(express.json());
